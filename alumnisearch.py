@@ -1,9 +1,10 @@
 import sys
 from PyQt4 import QtGui, QtCore
 from bs4 import BeautifulSoup as soup 
-import urllib2
-import httplib
+from urllib2 import Request,urlopen,HTTPError
+import time
 from xgoogle.search import GoogleSearch , SearchError
+import httplib
 
 
 
@@ -20,25 +21,31 @@ class GUI(QtGui.QInputDialog):
 			self.text = text	
 
 def search(url):
-	request = urllib2.Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
-	opener = urllib2.build_opener()
-	data = opener.open(request).read()
+	print "Here"
+	request = Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
+	data =  urlopen(request).read()
 	if "Kharagpur" in data:
 		print "Kgpian"
-
+		return "Kgpian"
 
 def google(text):
-	
+	time.sleep(1)
 	try:
-		print "Trying to search for "
+		print "Trying to search for "+text
+	
 		g1 = GoogleSearch(text)
-		g1.results_per_page = 10
+	
+	
+		g1.results_per_page = 25
+	
 		results = g1.get_results()
-		for result in results[:2]:
-			response = search(result.url.encode("utf8"))
-	except SearchError,e:
+		print len(results)
+		for res in results[:2]:
+			time.sleep(1)
+			response = search(res.url.encode("utf8"))
+	except SearchError, e:
 		print "Failed Once"
-	except urllib2.HTTPError:
+	except HTTPError:
 		print "Oops"
 
 
@@ -60,6 +67,7 @@ def main():
 
 
 if __name__ == '__main__':
+	httplib.HTTPConnection.debuglevel = 1
 	main()
 
 
