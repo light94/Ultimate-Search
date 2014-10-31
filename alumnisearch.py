@@ -5,7 +5,7 @@ from urllib2 import Request,urlopen,HTTPError
 import time
 from xgoogle.search import GoogleSearch , SearchError
 import httplib
-
+import webbrowser
 
 
 class GUI(QtGui.QInputDialog):
@@ -21,11 +21,13 @@ class GUI(QtGui.QInputDialog):
 			self.text = text	
 
 def search(url):
-	print "Here"
 	request = Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
 	data =  urlopen(request).read()
 	if "Kharagpur" in data:
 		print "Kgpian"
+		print "Url opened in your browser"
+		webbrowser.open_new_tab(url)
+		
 		return "Kgpian"
 
 def google(text):
@@ -39,7 +41,7 @@ def google(text):
 		g1.results_per_page = 25
 	
 		results = g1.get_results()
-		print len(results)
+		
 		for res in results[:2]:
 			time.sleep(1)
 			response = search(res.url.encode("utf8"))
