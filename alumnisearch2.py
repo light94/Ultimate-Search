@@ -1,5 +1,4 @@
 import sys
-from PyQt4 import QtGui, QtCore
 from bs4 import BeautifulSoup as soup 
 from urllib2 import Request,urlopen,HTTPError
 import time
@@ -7,20 +6,7 @@ from xgoogle.search import GoogleSearch , SearchError
 import httplib
 import webbrowser
 import ezodf
-
-class GUI(QtGui.QFileDialog):
-
-	def __init__(self):
-		super(GUI,self).__init__()
-		
 	
-	def initGUI(self):
-		
-		filename = self.getOpenFileName(self,'Open File','/rahul')
-		name = str(filename)
-		self.name = name
-		print name
-		self.hide()
 			
 def search(url):
 	request = Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
@@ -94,15 +80,9 @@ def openfile(fname):
 					
 
 def main():
-	app = QtGui.QApplication(sys.argv)
-	obj = GUI()
+	a = raw_input('Enter the complete path of the file\n')
+	openfile(a)
 	
-	
-	QtCore.QTimer.singleShot(0, obj.initGUI)
-	
-	if not app.exec_():
-		#google(text)
-		openfile(obj.name)
 
 
 
