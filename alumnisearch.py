@@ -8,68 +8,85 @@ import httplib
 import webbrowser
 
 
-class GUI(QtGui.QInputDialog):
-
+class GUI(QtGui.QWidget):
 	def __init__(self):
 		super(GUI,self).__init__()
-		#self.GUI()
+		self.initGUI()
+
+	def google(self,text):
+		
+		try:
+			print "Trying to search for "+text
+		
+			g1 = GoogleSearch(text)
+		
+		
+			g1.results_per_page = 25
+		
+			results = g1.get_results()
+			
+			if len(results)==0:
+				print "No search result!!"
+			else:
+				print "Results FOund!!"
+				print type(results)
+				print len(results)
+				for res in results[:2]:
+					time.sleep(1)
+					url = res.url.encode("utf8")
+					response = self.search(url)
+					if response == "Kgpian":
+						self.close()
+						break
+		except SearchError, e:
+			print "Failed Once"
+		except HTTPError:
+			print "Oops"
+
+	
 	
 	def initGUI(self):
-		text,response = self.getText(self,'Input','Enter alumni name here')
-		if response:
-			print text
-			self.text = text	
-
-def search(url):
-	request = Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
-	data =  urlopen(request).read()
-	if "Kharagpur" in data:
-		print "Kgpian"
-		print "Url opened in your browser"
-		webbrowser.open_new_tab(url)
 		
-		return "Kgpian"
+		self.btn = QtGui.QPushButton('Input Name',self)
+		self.btn.move(20,20)
+		self.btn.clicked.connect(self.showDialog)
 
-def google(text):
-	time.sleep(1)
-	try:
-		print "Trying to search for "+text
+		self.setWindowTitle('Search')
+		self.setGeometry(300,300,250,150)
+		self.show()
+
+	def showDialog(self):
+
+		text,ok = QtGui.QInputDialog.getText(self,'Input','Enter The search term')
+		if ok:
+			self.text = str(text)
+			self.google(self.text)
+
+
+	def search(self,url):
+		request = Request(url,headers = {'User-Agent': 'Mozilla/5.0'})
+		data =  urlopen(request).read()
+		if "Kharagpur" in data:
+			print "Kgpian"
+			# print "Url opened in your browser"
+			# webbrowser.open_new_tab(url)
+			
+			return "Kgpian"
+
 	
-		g1 = GoogleSearch(text)
-	
-	
-		g1.results_per_page = 25
-	
-		results = g1.get_results()
-		
-		for res in results[:2]:
-			time.sleep(1)
-			response = search(res.url.encode("utf8"))
-	except SearchError, e:
-		print "Failed Once"
-	except HTTPError:
-		print "Oops"
 
 
 def main():
 	app = QtGui.QApplication(sys.argv)
 	obj = GUI()
-	
-	
-	QtCore.QTimer.singleShot(0, obj.initGUI)
-	
-
-	if not app.exec_():
-		text = obj.text
-		text = str(text)
-		google(text)
+	sys.exit(app.exec_())
 
 
 
 
 
 if __name__ == '__main__':
-	httplib.HTTPConnection.debuglevel = 1
+	#httplib.HTTPConnection.debuglevel = 1
 	main()
 
 
